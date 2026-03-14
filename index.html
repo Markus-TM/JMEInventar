@@ -1,12 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Kasse</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:10px;
+background:#f2f2f2;
+}
+
+nav{
+display:flex;
+gap:5px;
+margin-bottom:10px;
+}
+
+nav button{
+flex:1;
+padding:12px;
+font-size:16px;
+}
+
+.view{
+display:none;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+.itemBtn{
+background:white;
+padding:20px;
+border-radius:10px;
+font-size:18px;
+border:1px solid #ccc;
+}
+
+.cart{
+background:white;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+}
+
+.sellBtn{
+width:100%;
+padding:15px;
+font-size:18px;
+background:#4CAF50;
+color:white;
+border:none;
+border-radius:10px;
+margin-top:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+td,th{
+padding:8px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+input{
+margin:3px;
+padding:6px;
+}
+
+</style>
+
 </head>
+
 <body>
-    <h2>Jme Inventar</h2>
-    
+
+<nav>
+<button onclick="show('kasse')">Kasse</button>
+<button onclick="show('inventar')">Inventar</button>
+<button onclick="show('stats')">Statistik</button>
+</nav>
+
+<!-- KASSE -->
+
+<div id="kasse" class="view">
+
+<h2>Kasse</h2>
+
+<div id="items" class="grid"></div>
+
+<div class="cart">
+
+<h3>Bestellung</h3>
+
+<div id="cartList"></div>
+
+<div id="total"></div>
+
+<button class="sellBtn" onclick="sell()">Verkaufen</button>
+
+</div>
+
+</div>
+
+<!-- INVENTAR -->
+
+<div id="inventar" class="view">
+
+<h2>Inventar</h2>
+
+<input id="name" placeholder="Name">
+<input id="price" type="number" step="0.01" placeholder="Preis">
+<input id="stock" type="number" placeholder="Stock">
+
+<button onclick="addItem()">Artikel hinzufügen</button>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Name</th>
+<th>Preis</th>
+<th>Stock</th>
+<th>+</th>
+<th>-</th>
+</tr>
+
+</thead>
+
+<tbody id="invTable"></tbody>
+
+</table>
+
+</div>
+
+<!-- STATISTIK -->
+
+<div id="stats" class="view">
+
+<h2>Statistik</h2>
+
+<div id="statsContent"></div>
+
+</div>
+
+<script>
+
+let items = JSON.parse(localStorage.getItem("items")) || {}
+let money = parseFloat(localStorage.getItem("money")) || 0
+let cart = {}
+
+function save(){
+
+localStorage.setItem("items",JSON.stringify(items))
+localStorage.setItem("money",money.toString())
+
+}
+
+function show(v){
+
+document.querySelectorAll(".view").forEach(e=>e.style.display="none")
+
+document.getElementById(v).style.display="block"
+
+render()
+
+}
+
+function addItem(){
+
+let name=document.getElementById("name").value
+let price=parseFloat(document.getElementById("price").value)
+let stock=parseInt(document.getElementById("stock").value)
+
+if(!name || isNaN(price) || isNaN(stock)){
+
+alert("Bitte alle Felder ausfüllen")
+return
+
+}
+
+items[name]={price,stock,sold:0}
+
+document.getElementById("name").value=""
+document.getElementById("price").value=""
+document.getElementById("stock").value=""
+
+save()
+render()
+
+}
+
+function addStock(name){
+
+items[name].stock++
+
+save()
+render()
+
+}
+
+function removeStock(name){
+
+if(items[name].stock>0){
+items[name].stock--
+}
+
+save()
+render()
+
+}
+
+function addCart(name){
+
+if(!cart[name]) cart[name]=0
+
+cart[name]++
+
+render()
+
+}
+
+function sell(){
+
+if(Object.keys(cart).length===0) return
+
+if(!confirm("Verkauf bestätigen?")) return
+
+for(let name in cart){
+
+let qty=cart[name]
+
+if(items[name].stock<qty){
+
+alert("Nicht genug "+name)
+return
+
+}
+
+items[name].stock -= qty
+items[name].sold += qty
+
+money = money + (qty * items[name].price)
+
+}
+
+cart={}
+
+save()
+render()
+
+}
+
+function render(){
+
+let itemsDiv=document.getElementById("items")
+itemsDiv.innerHTML=""
+
+for(let name in items){
+
+let d=items[name]
+
+itemsDiv.innerHTML+=`
+
+<button class="itemBtn" onclick="addCart('${name}')">
+
+${name}<br>
+${d.price.toFixed(2)} €<br>
+Stock ${d.stock}
+
+</button>
+
+`
+
+}
+
+let cartList=document.getElementById("cartList")
+cartList.innerHTML=""
+
+let total=0
+
+for(let name in cart){
+
+let qty=cart[name]
+let price=items[name].price
+
+let sum = qty*price
+total += sum
+
+cartList.innerHTML+=`${name} x ${qty} = ${sum.toFixed(2)} €<br>`
+
+}
+
+document.getElementById("total").innerHTML="<b>Total: "+total.toFixed(2)+" €</b>"
+
+let table=document.getElementById("invTable")
+table.innerHTML=""
+
+for(let name in items){
+
+let d=items[name]
+
+table.innerHTML+=`
+
+<tr>
+
+<td>${name}</td>
+<td>${d.price.toFixed(2)} €</td>
+<td>${d.stock}</td>
+
+<td><button onclick="addStock('${name}')">+</button></td>
+<td><button onclick="removeStock('${name}')">-</button></td>
+
+</tr>
+
+`
+
+}
+
+let statsHTML="Einnahmen: "+money.toFixed(2)+" €<br><br>"
+
+for(let name in items){
+
+let d=items[name]
+
+statsHTML+=`
+
+<b>${name}</b><br>
+verkauft: ${d.sold}<br>
+rest: ${d.stock}<br><br>
+
+`
+
+}
+
+document.getElementById("statsContent").innerHTML=statsHTML
+
+}
+
+show("kasse")
+
+</script>
+
 </body>
 </html>
