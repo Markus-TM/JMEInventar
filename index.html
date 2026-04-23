@@ -1,85 +1,10 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Event Kasse</title>
-
-<style>
-
-body{
-font-family:Arial;
-margin:10px;
-background:#f2f2f2;
-}
-
-nav{
-display:flex;
-gap:5px;
-margin-bottom:10px;
-}
-
-nav button{
-flex:1;
-padding:12px;
-font-size:16px;
-}
-
-.view{
-display:none;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-}
-
-.itemBtn{
-background:white;
-padding:20px;
-border-radius:10px;
-font-size:18px;
-border:1px solid #ccc;
-}
-
-.cart{
-background:white;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-}
-
-.sellBtn{
-width:100%;
-padding:15px;
-font-size:18px;
-background:#4CAF50;
-color:white;
-border:none;
-border-radius:10px;
-margin-top:10px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-}
-
-td,th{
-padding:8px;
-border-bottom:1px solid #ddd;
-text-align:left;
-}
-
-input{
-margin:3px;
-padding:6px;
-}
-
-</style>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Event Kasse</title>
+	<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -134,6 +59,7 @@ padding:6px;
 <th>Stock</th>
 <th>+</th>
 <th>-</th>
+<th>Aktion</th>
 </tr>
 
 </thead>
@@ -150,207 +76,18 @@ padding:6px;
 
 <h2>Statistik</h2>
 
-<div id="statsContent"></div>
+<div id="passwordPrompt" style="display:none;">
+<input type="password" id="statsPassword" placeholder="Passwort eingeben">
+<button onclick="checkPassword()">Zugriff</button>
+</div>
+
+<div id="statsContent" style="display:none;"></div>
+
+<button id="csvBtn" onclick="exportCSV()" style="display:none;margin-top:10px;background:#2196F3;color:white;padding:10px;border:none;border-radius:5px;">CSV Export</button>
 
 </div>
 
-<script>
-
-let items = JSON.parse(localStorage.getItem("items")) || {}
-let money = parseFloat(localStorage.getItem("money")) || 0
-let cart = {}
-
-function save(){
-
-localStorage.setItem("items",JSON.stringify(items))
-localStorage.setItem("money",money.toString())
-
-}
-
-function show(v){
-
-document.querySelectorAll(".view").forEach(e=>e.style.display="none")
-
-document.getElementById(v).style.display="block"
-
-render()
-
-}
-
-function addItem(){
-
-let name=document.getElementById("name").value
-let price=parseFloat(document.getElementById("price").value)
-let stock=parseInt(document.getElementById("stock").value)
-
-if(!name || isNaN(price) || isNaN(stock)){
-
-alert("Bitte alle Felder ausfüllen")
-return
-
-}
-
-items[name]={price,stock,sold:0}
-
-document.getElementById("name").value=""
-document.getElementById("price").value=""
-document.getElementById("stock").value=""
-
-save()
-render()
-
-}
-
-function addStock(name){
-
-items[name].stock++
-
-save()
-render()
-
-}
-
-function removeStock(name){
-
-if(items[name].stock>0){
-items[name].stock--
-}
-
-save()
-render()
-
-}
-
-function addCart(name){
-
-if(!cart[name]) cart[name]=0
-
-cart[name]++
-
-render()
-
-}
-
-function sell(){
-
-if(Object.keys(cart).length===0) return
-
-if(!confirm("Verkauf bestätigen?")) return
-
-for(let name in cart){
-
-let qty=cart[name]
-
-if(items[name].stock<qty){
-
-alert("Nicht genug "+name)
-return
-
-}
-
-items[name].stock -= qty
-items[name].sold += qty
-
-money = money + (qty * items[name].price)
-
-}
-
-cart={}
-
-save()
-render()
-
-}
-
-function render(){
-
-let itemsDiv=document.getElementById("items")
-itemsDiv.innerHTML=""
-
-for(let name in items){
-
-let d=items[name]
-
-itemsDiv.innerHTML+=`
-
-<button class="itemBtn" onclick="addCart('${name}')">
-
-${name}<br>
-${d.price.toFixed(2)} €<br>
-Stock ${d.stock}
-
-</button>
-
-`
-
-}
-
-let cartList=document.getElementById("cartList")
-cartList.innerHTML=""
-
-let total=0
-
-for(let name in cart){
-
-let qty=cart[name]
-let price=items[name].price
-
-let sum = qty*price
-total += sum
-
-cartList.innerHTML+=`${name} x ${qty} = ${sum.toFixed(2)} €<br>`
-
-}
-
-document.getElementById("total").innerHTML="<b>Total: "+total.toFixed(2)+" €</b>"
-
-let table=document.getElementById("invTable")
-table.innerHTML=""
-
-for(let name in items){
-
-let d=items[name]
-
-table.innerHTML+=`
-
-<tr>
-
-<td>${name}</td>
-<td>${d.price.toFixed(2)} €</td>
-<td>${d.stock}</td>
-
-<td><button onclick="addStock('${name}')">+</button></td>
-<td><button onclick="removeStock('${name}')">-</button></td>
-
-</tr>
-
-`
-
-}
-
-let statsHTML="Einnahmen: "+money.toFixed(2)+" €<br><br>"
-
-for(let name in items){
-
-let d=items[name]
-
-statsHTML+=`
-
-<b>${name}</b><br>
-verkauft: ${d.sold}<br>
-rest: ${d.stock}<br><br>
-
-`
-
-}
-
-document.getElementById("statsContent").innerHTML=statsHTML
-
-}
-
-show("kasse")
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
