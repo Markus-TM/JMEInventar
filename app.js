@@ -87,6 +87,20 @@ function renderStats(){
 	document.getElementById("statsContent").innerHTML=statsHTML
 }
 
+// NEU: Funktion zum Zurücksetzen des Events
+function resetEvent() {
+    if(!confirm("Möchtest du wirklich ein neues Event starten? Alle Einnahmen und Verkaufszahlen werden auf 0 gesetzt. Die Lagerbestände bleiben erhalten!")) return;
+    
+    money = 0;
+    for(let name in items) {
+        items[name].sold = 0;
+    }
+    
+    save();
+    render();
+    alert("Statistiken wurden zurückgesetzt. Viel Erfolg beim neuen Event!");
+}
+
 function exportCSV(){
 	let csv="Name,Preis,Verkauft,Bestand,Gesamtumsatz\n"
 
@@ -103,7 +117,6 @@ function exportCSV(){
 	link.href=URL.createObjectURL(blob)
 	link.download="Statistik_"+new Date().toISOString().slice(0,10)+".csv"
 	
-	// Temporäres Hinzufügen für iOS/iPadOS Kompatibilität
 	document.body.appendChild(link)
 	link.click()
 	document.body.removeChild(link)
