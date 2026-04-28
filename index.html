@@ -76,11 +76,16 @@
 
 <h2>Statistik</h2>
 
+<div id="passwordPrompt" style="display:none; text-align:center; padding:20px;">
+<input type="password" id="statsPassword" placeholder="Passwort eingeben">
+<button onclick="checkPassword()">Zugriff</button>
+</div>
+
 <div id="statsContent"></div>
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <button id="csvBtn" onclick="exportCSV()" style="margin-top:10px;background:#2196F3;color:white;padding:10px;border:none;border-radius:5px;flex:1;">CSV Export</button>
-    <button id="resetBtn" onclick="resetEvent()" style="margin-top:10px;background:#f44336;color:white;padding:10px;border:none;border-radius:5px;flex:1;">Neues Event starten</button>
+    <button id="csvBtn" onclick="exportCSV()" style="margin-top:10px;background:#2196F3;color:white;padding:10px;border:none;border-radius:5px;flex:1;display:none;">CSV Export</button>
+    <button id="resetBtn" onclick="resetEvent()" style="margin-top:10px;background:#f44336;color:white;padding:10px;border:none;border-radius:5px;flex:1;display:none;">Neues Event starten</button>
 </div>
 
 </div>

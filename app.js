@@ -12,7 +12,11 @@ function show(v){
 	document.getElementById(v).style.display="block"
 
 	if(v==="stats"){
-		renderStats()
+		document.getElementById("passwordPrompt").style.display="block"
+		document.getElementById("statsContent").style.display="none"
+		document.getElementById("csvBtn").style.display="none"
+		document.getElementById("resetBtn").style.display="none"
+		document.getElementById("statsPassword").value=""
 	}
 
 	render()
@@ -69,6 +73,20 @@ function deleteItem(name){
 	delete items[name]
 	save()
 	render()
+}
+
+function checkPassword(){
+	let pwd=document.getElementById("statsPassword").value
+
+	if(pwd==="KingAshour"){
+		document.getElementById("passwordPrompt").style.display="none"
+		document.getElementById("statsContent").style.display="block"
+		document.getElementById("csvBtn").style.display="inline-block"
+		document.getElementById("resetBtn").style.display="inline-block"
+		renderStats()
+	}else{
+		alert("Passwort falsch!")
+	}
 }
 
 function renderStats(){

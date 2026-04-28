@@ -1,7 +1,8 @@
 body{
 font-family:Arial;
 margin:0;
-padding:10px;
+padding:0;
+padding-top:70px;
 padding-bottom:280px;
 background:#f2f2f2;
 touch-action:manipulation;
@@ -24,6 +25,14 @@ nav{
 display:flex;
 gap:5px;
 margin-bottom:10px;
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:100;
+background:#f2f2f2;
+padding:10px;
+box-sizing:border-box;
 }
 
 nav button{
@@ -36,14 +45,24 @@ font-size:16px;
 display:none;
 }
 
+h2{
+position:sticky;
+top:60px;
+background:#f2f2f2;
+padding:10px 0;
+margin:0;
+z-index:50;
+}
+
 .grid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
 gap:10px;
 flex:1;
 overflow-y:auto;
-padding-right:5px;
+padding:10px 10px 10px 10px;
 -webkit-overflow-scrolling:touch;
+margin-bottom:0;
 }
 
 .itemBtn{
