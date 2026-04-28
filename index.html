@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>Event Kasse</title>
 	<link rel="stylesheet" href="styles.css">
 </head>
@@ -14,8 +14,6 @@
 <button onclick="show('inventar')">Inventar</button>
 <button onclick="show('stats')">Statistik</button>
 </nav>
-
-<!-- KASSE -->
 
 <div id="kasse" class="view">
 
@@ -37,8 +35,6 @@
 
 </div>
 
-<!-- INVENTAR -->
-
 <div id="inventar" class="view">
 
 <h2>Inventar</h2>
@@ -48,6 +44,10 @@
 <input id="stock" type="number" placeholder="Stock">
 
 <button onclick="addItem()">Artikel hinzufügen</button>
+
+<br><br>
+<label for="csvImport"><strong>Inventar (CSV) importieren:</strong></label><br>
+<input type="file" id="csvImport" accept=".csv" onchange="importCSV(event)" style="margin-top:5px;">
 
 <table>
 
@@ -70,20 +70,13 @@
 
 </div>
 
-<!-- STATISTIK -->
-
 <div id="stats" class="view">
 
 <h2>Statistik</h2>
 
-<div id="passwordPrompt" style="display:none;">
-<input type="password" id="statsPassword" placeholder="Passwort eingeben">
-<button onclick="checkPassword()">Zugriff</button>
-</div>
+<div id="statsContent"></div>
 
-<div id="statsContent" style="display:none;"></div>
-
-<button id="csvBtn" onclick="exportCSV()" style="display:none;margin-top:10px;background:#2196F3;color:white;padding:10px;border:none;border-radius:5px;">CSV Export</button>
+<button id="csvBtn" onclick="exportCSV()" style="margin-top:10px;background:#2196F3;color:white;padding:10px;border:none;border-radius:5px;">CSV Export</button>
 
 </div>
 

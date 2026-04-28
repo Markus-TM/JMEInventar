@@ -12,10 +12,7 @@ function show(v){
 	document.getElementById(v).style.display="block"
 
 	if(v==="stats"){
-		document.getElementById("passwordPrompt").style.display="block"
-		document.getElementById("statsContent").style.display="none"
-		document.getElementById("csvBtn").style.display="none"
-		document.getElementById("statsPassword").value=""
+		renderStats()
 	}
 
 	render()
@@ -74,19 +71,6 @@ function deleteItem(name){
 	render()
 }
 
-function checkPassword(){
-	let pwd=document.getElementById("statsPassword").value
-
-	if(pwd==="KingAshour"){
-		document.getElementById("passwordPrompt").style.display="none"
-		document.getElementById("statsContent").style.display="block"
-		document.getElementById("csvBtn").style.display="block"
-		renderStats()
-	}else{
-		alert("Passwort falsch!")
-	}
-}
-
 function renderStats(){
 	let statsHTML="<b>Einnahmen: "+money.toFixed(2)+" €</b><br><br>"
 
@@ -118,14 +102,50 @@ function exportCSV(){
 	let link=document.createElement("a")
 	link.href=URL.createObjectURL(blob)
 	link.download="Statistik_"+new Date().toISOString().slice(0,10)+".csv"
+	
+	// Temporäres Hinzufügen für iOS/iPadOS Kompatibilität
+	document.body.appendChild(link)
 	link.click()
+	document.body.removeChild(link)
+}
+
+function importCSV(event) {
+    let file = event.target.files[0];
+    if (!file) return;
+
+    let reader = new FileReader();
+    reader.onload = function(e) {
+        let text = e.target.result;
+        let lines = text.split('\n');
+        
+        for (let i = 1; i < lines.length; i++) {
+            if (lines[i].trim() === "") continue;
+            
+            let separator = lines[i].includes(';') ? ';' : ',';
+            let parts = lines[i].split(separator);
+            
+            if(parts.length >= 3) {
+                let name = parts[0].replace(/"/g, '').trim();
+                let price = parseFloat(parts[1].replace(/"/g, '').replace(',', '.')); 
+                let stock = parseInt(parts[2].replace(/"/g, ''));
+                
+                if(name && !isNaN(price) && !isNaN(stock)) {
+                    items[name] = {price: price, stock: stock, sold: items[name] ? items[name].sold : 0};
+                }
+            }
+        }
+        save();
+        render();
+        alert("Inventar erfolgreich importiert!");
+        event.target.value = ''; 
+    };
+    reader.readAsText(file);
 }
 
 function addCart(name, element){
 	if(!cart[name]) cart[name]=0
 	cart[name]++
 	
-	// Visuelles Feedback - Button wird kurz grün
 	if(element){
 		element.style.backgroundColor = "#4CAF50"
 		element.style.color = "white"
