@@ -49,6 +49,12 @@
 
 <button onclick="addItem()">Artikel hinzufügen</button>
 
+<div style="margin-top:15px; border-top:2px solid #ddd; padding-top:10px;">
+<button onclick="exportInventory()" style="background:#2196F3;color:white;">📥 Inventar Exportieren</button>
+<button onclick="document.getElementById('importFile').click()" style="background:#FF9800;color:white;">📤 Inventar Importieren</button>
+<input type="file" id="importFile" accept=".json" style="display:none;" onchange="importInventory()">
+</div>
+
 <table>
 
 <thead>

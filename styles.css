@@ -2,6 +2,12 @@ body{
 font-family:Arial;
 margin:10px;
 background:#f2f2f2;
+touch-action:manipulation;
+}
+
+html{
+-webkit-user-scalable:no;
+-webkit-touch-callout:none;
 }
 
 nav{
@@ -24,6 +30,9 @@ display:none;
 display:grid;
 grid-template-columns:repeat(2,1fr);
 gap:10px;
+max-height:calc(100vh - 250px);
+overflow-y:auto;
+padding-right:5px;
 }
 
 .itemBtn{

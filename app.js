@@ -121,6 +121,51 @@ function exportCSV(){
 	link.click()
 }
 
+function exportInventory(){
+	let data={
+		items:items,
+		exportDate:new Date().toISOString()
+	}
+	
+	let json=JSON.stringify(data, null, 2)
+	let blob=new Blob([json],{type:"application/json"})
+	let link=document.createElement("a")
+	link.href=URL.createObjectURL(blob)
+	link.download="Inventar_"+new Date().toISOString().slice(0,10)+".json"
+	link.click()
+}
+
+function importInventory(){
+	let file=document.getElementById("importFile").files[0]
+	
+	if(!file) return
+	
+	let reader=new FileReader()
+	
+	reader.onload=function(e){
+		try{
+			let data=JSON.parse(e.target.result)
+			
+			if(!data.items || typeof data.items !== 'object'){
+				alert("Datei ist nicht im richtigen Format!")
+				return
+			}
+			
+			if(confirm("Aktuelles Inventar durch importierte Daten ersetzen?")){
+				items=data.items
+				save()
+				render()
+				alert("Inventar erfolgreich importiert!")
+			}
+		}catch(err){
+			alert("Fehler beim Lesen der Datei: "+err.message)
+		}
+	}
+	
+	reader.readAsText(file)
+	document.getElementById("importFile").value=""
+}
+
 function addCart(name, element){
 	if(!cart[name]) cart[name]=0
 	cart[name]++
