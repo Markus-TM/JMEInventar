@@ -78,7 +78,10 @@
 
 <div id="statsContent"></div>
 
-<button id="csvBtn" onclick="exportCSV()" style="margin-top:10px;background:#2196F3;color:white;padding:10px;border:none;border-radius:5px;">CSV Export</button>
+<div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <button id="csvBtn" onclick="exportCSV()" style="margin-top:10px;background:#2196F3;color:white;padding:10px;border:none;border-radius:5px;flex:1;">CSV Export</button>
+    <button id="resetBtn" onclick="resetEvent()" style="margin-top:10px;background:#f44336;color:white;padding:10px;border:none;border-radius:5px;flex:1;">Neues Event starten</button>
+</div>
 
 </div>
 

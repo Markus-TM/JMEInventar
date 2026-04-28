@@ -90,7 +90,6 @@ border:none;
 border-radius:10px;
 margin-top:10px;
 cursor:pointer;
-/* Verhindert Zoom und Markieren bei Touch-Geräten */
 touch-action: manipulation;
 -webkit-user-select: none;
 user-select: none;
